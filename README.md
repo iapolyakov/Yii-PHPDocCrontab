@@ -7,7 +7,7 @@ Simple and convenient installing console commands as cron jobs.
 - Grouping jobs (example: segmentation by server)
 
 ##Requirements
-Yii Framework 1.1.6 or above
+- Yii Framework 1.1.6 or above (1.1.30 recommended for PHP 8)
 
 ##Usage
 Installing action 'Example1' of command 'Test' to run every 10 minutes. Just add doc-comment for console action.

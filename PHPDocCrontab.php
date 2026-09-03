@@ -145,7 +145,8 @@ RAW;
      * @return array List of valid tags
      */
     protected function parseDocComment($comment){
-        if (empty($comment)) return array();
+        $return = array();
+        if (empty($comment)) return $return;
         //Forming pattern based on $this->tagPrefix
         $pattern = '#^\s*\*\s+@('.$this->tagPrefix.'(-(\w+))?)\s*(.*?)\s*$#im';
         //Miss tags:
@@ -161,6 +162,7 @@ RAW;
                 return $return;
             }
         }
+        return $return;
     }
 
     /**
@@ -174,7 +176,7 @@ RAW;
         // Command loop
         foreach ($Runner->commands AS $command => $file){
             $CommandObject = $Runner->createCommand($command);
-            if ($CommandObject instanceof $this) continue;
+            if ($CommandObject instanceof self) continue;
             $Reflection = new ReflectionObject($CommandObject);
             // Methods loop
             $Methods = $Reflection->getMethods(ReflectionMethod::IS_PUBLIC);
@@ -296,13 +298,17 @@ RAW;
         }
     }
 
+    protected function replaceDatePlaceholder($matches){
+        return date($matches[1]);
+    }
+
     protected function formatFileName($pattern, $task){
         $pattern = str_replace(
             array('%L', '%C', '%A', '%P'),
             array($this->logsDir, $task['command'], $task['action'], getmypid()),
             $pattern
         );
-        return preg_replace_callback('#%D\((.+)\)#U', create_function('$str', 'return date($str[1]);'), $pattern);
+        return preg_replace_callback('#%D\((.+)\)#U', array($this, 'replaceDatePlaceholder'), $pattern);
     }
 
     /**
